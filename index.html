@@ -4,19 +4,61 @@
   <meta charset="UTF-8">
   <title>IAIP - Caesar Cipher</title>
   <style>
-    body { font-family: Arial; text-align: center; background: #1e1e2f; color: white; padding: 50px; }
-    .box { background: #2e2e4e; padding: 30px; border-radius: 15px; display: inline-block; }
+    body { font-family: Arial; background: #1e1e2f; color: white; padding: 20px; text-align: center; }
+   .box { background: #2e2e4e; padding: 30px; border-radius: 15px; max-width: 600px; margin: auto; }
+    input, textarea, button { padding: 10px; margin: 10px; width: 80%; border-radius: 8px; border: none; }
+    button { background: #00bfff; color: black; font-weight: bold; cursor: pointer; }
+    button:hover { background: #00a0dd; }
+    #result { background: #111; padding: 15px; border-radius: 8px; word-wrap: break-word; }
     a { color: #00bfff; }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>Implement Caesar Cipher</h1>
-    <p>CREATE A PYTHON PROGRAM THAT CAN ENCRYPT AND DECRYPT TEXT USING THE CAESAR CIPHER ALGORITHM.</p>
-    <p>ALLOW USERS TO INPUT A MESSAGE AND A SHIFT VALUE TO PERFORM ENCRYPTION AND DECRYPTION.</p>
+    <p>Encrypt and Decrypt Text using Caesar Cipher Algorithm</p>
+    
+    <textarea id="message" rows="3" placeholder="Enter Message"></textarea><br>
+    <input id="shift" type="number" placeholder="Enter Shift Value 1-25" value="3"><br>
+    
+    <button onclick="encrypt()">Encrypt</button>
+    <button onclick="decrypt()">Decrypt</button>
+    
+    <h3>Result:</h3>
+    <div id="result"></div>
     <br>
-    <h3>Download Code:</h3>
+    <h3>Download Python Code:</h3>
     <a href="caesar_cipher.py" download>caesar_cipher.py</a>
   </div>
+
+<script>
+function caesar(text, shift) {
+  let result = "";
+  for(let i=0; i<text.length; i++) {
+    let char = text[i];
+    if(char.match(/[a-z]/i)) {
+      let code = text.charCodeAt(i);
+      if(code >= 65 && code <= 90)
+        char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+      else if(code >= 97 && code <= 122)
+        char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
+    }
+    result += char;
+  }
+  return result;
+}
+
+function encrypt() {
+  let msg = document.getElementById("message").value;
+  let shift = parseInt(document.getElementById("shift").value);
+  document.getElementById("result").innerText = caesar(msg, shift);
+}
+
+function decrypt() {
+  let msg = document.getElementById("message").value;
+  let shift = parseInt(document.getElementById("shift").value);
+  document.getElementById("result").innerText = caesar(msg, -shift);
+}
+</script>
 </body>
 </html>
