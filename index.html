@@ -1,120 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caesar Cipher - Inten Alpha Project</title>
-<style>
-  body {
-    background: #0d1117; color: #c9d1d9; font-family: Arial; 
-    display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;
-  }
- .box {
-    background: #161b22; padding: 25px; border-radius: 12px; width: 400px; 
-    box-shadow: 0 0 15px rgba(0,123,255,0.3);
-  }
- .header { text-align: center; margin-bottom: 15px; }
- .header p { font-size: 13px; color: #58a6ff; margin: 0; }
-  input, select, button {
-    width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; 
-    border: 1px solid #30363d; background: #0d1117; color: #c9d1d9; font-size: 15px;
-  }
-  button { background: #238636; cursor: pointer; font-weight: bold; }
-  button:hover { background: #2ea043; }
- .btn-secondary { background: #1f6feb; }
- .btn-secondary:hover { background: #388bfd; }
- .result { margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 6px; word-wrap: break-word; }
- .history { margin-top: 15px; max-height: 120px; overflow-y: auto; font-size: 12px; }
- .history-item { background: #21262d; padding: 5px; margin: 3px 0; border-radius: 4px; }
-</style>
+  <meta charset="UTF-8">
+  <title>IAIP - Caesar Cipher | Inten Alpha</title>
+  <style>
+    body { font-family: Arial; background: #1e1e2f; color: white; padding: 20px; text-align: center; }
+  .box { background: #2e2e4e; padding: 30px; border-radius: 15px; max-width: 600px; margin: auto; box-shadow: 0 0 20px rgba(0,191,255,0.2); }
+    input, textarea, button { padding: 12px; margin: 10px; width: 80%; border-radius: 8px; border: none; font-size: 15px; }
+    button { background: #00bfff; color: black; font-weight: bold; cursor: pointer; width: 38%; }
+    button:hover { background: #00a0dd; transform: scale(1.02); }
+    #result { background: #111; padding: 15px; border-radius: 8px; word-wrap: break-word; min-height: 50px; text-align: left; }
+    a { color: #00bfff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  .footer { font-size: 12px; color: #aaa; margin-top: 20px; }
+   .error { color: #ff4d4d; font-size: 13px; }
+  </style>
 </head>
 <body>
-<div class="box">
-  <div class="header">
-    <h2>Caesar Cipher</h2>
-    <p>Project for Inten Alpha | Name: Binay</p>
+  <div class="box">
+    <h1>Implement Caesar Cipher</h1>
+    <p style="color:#00bfff;">Project for Inten Alpha</p>
+    <p>Encrypt and Decrypt Text using Caesar Cipher Algorithm</p>
+
+    <textarea id="message" rows="3" placeholder="Enter Message"></textarea><br>
+    <input id="shift" type="number" placeholder="Enter Shift Value 1-25" min="1" max="25" value="3"><br>
+    <p id="error" class="error"></p>
+
+    <button onclick="encrypt()">Encrypt</button>
+    <button onclick="decrypt()">Decrypt</button>
+
+    <h3>Result:</h3>
+    <div id="result"></div>
+    <br>
+    <h3>Download Python Code:</h3>
+    <a href="caesar_cipher.py" download>caesar_cipher.py</a>
+
+    <div class="footer">
+      <p>Developed by: Binay</p>
+    </div>
   </div>
 
-  <label>Text:</label>
-  <input type="text" id="text" placeholder="Enter text here">
-
-  <label>Shift Key (1-25):</label>
-  <input type="number" id="shift" value="3" min="1" max="25">
-
-  <label>Mode:</label>
-  <select id="mode">
-    <option value="encrypt">Encrypt</option>
-    <option value="decrypt">Decrypt</option>
-    <option value="brute">Brute Force All Shifts</option>
-  </select>
-
-  <button onclick="process()">Process</button>
-  <button class="btn-secondary" onclick="copyResult()">Copy Result</button>
-  <button class="btn-secondary" onclick="downloadResult()">Download TXT</button>
-
-  <div class="result" id="result"></div>
-  
-  <h4 style="margin-top:15px;">History</h4>
-  <div class="history" id="history"></div>
-</div>
-
 <script>
-let history = [];
-
-function caesar(str, shift, mode) {
+function caesar(text, shift) {
   let result = "";
-  shift = mode === "decrypt"? 26 - shift : shift;
-  for (let i = 0; i < str.length; i++) {
-    let c = str[i];
-    if (c.match(/[a-z]/i)) {
-      let code = str.charCodeAt(i);
-      let base = code >= 65 && code <= 90? 65 : 97;
-      result += String.fromCharCode(((code - base + shift) % 26) + base);
-    } else {
-      result += c;
+  for(let i=0; i<text.length; i++) {
+    let char = text[i];
+    if(char.match(/[a-z]/i)) {
+      let code = text.charCodeAt(i);
+      if(code >= 65 && code <= 90)
+        char = String.fromCharCode(((code - 65 + shift + 26) % 26) + 65);
+      else if(code >= 97 && code <= 122)
+        char = String.fromCharCode(((code - 97 + shift + 26) % 26) + 97);
     }
+    result += char;
   }
   return result;
 }
 
-function process() {
-  let text = document.getElementById("text").value;
+function validate() {
   let shift = parseInt(document.getElementById("shift").value);
-  let mode = document.getElementById("mode").value;
-  let output = "";
+  let msg = document.getElementById("message").value;
+  document.getElementById("error").innerText = "";
 
-  if (mode === "brute") {
-    for (let s = 1; s <= 25; s++) {
-      output += `Shift ${s}: ${caesar(text, s, "decrypt")}\n`;
-    }
-  } else {
-    output = caesar(text, shift, mode);
+  if(msg.trim() === "") {
+    document.getElementById("error").innerText = "Please enter a message";
+    return false;
   }
-
-  document.getElementById("result").innerText = output;
-  addToHistory(text, shift, mode, output);
+  if(isNaN(shift) || shift < 1 || shift > 25) {
+    document.getElementById("error").innerText = "Shift must be between 1-25";
+    return false;
+  }
+  return true;
 }
 
-function copyResult() {
-  navigator.clipboard.writeText(document.getElementById("result").innerText);
-  alert("Copied!");
+function encrypt() {
+  if(!validate()) return;
+  let msg = document.getElementById("message").value;
+  let shift = parseInt(document.getElementById("shift").value);
+  document.getElementById("result").innerText = caesar(msg, shift);
 }
 
-function downloadResult() {
-  let blob = new Blob([document.getElementById("result").innerText], {type: "text/plain"});
-  let link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "caesar_result.txt";
-  link.click();
-}
-
-function addToHistory(text, shift, mode, result) {
-  history.unshift({text, shift, mode, result});
-  if (history.length > 5) history.pop();
-  let histDiv = document.getElementById("history");
-  histDiv.innerHTML = history.map(h => 
-    `<div class="history-item"><b>${h.mode}</b> S:${h.shift} → ${h.result.substring(0,30)}...</div>`
-  ).join("");
+function decrypt() {
+  if(!validate()) return;
+  let msg = document.getElementById("message").value;
+  let shift = parseInt(document.getElementById="shift").value;
+  document.getElementById("result").innerText = caesar(msg, -shift);
 }
 </script>
 </body>
