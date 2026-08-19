@@ -2,29 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IAIP - Caesar Cipher | Inten Alpha</title>
+  <title>IAIP - Caesar Cipher</title>
   <style>
     body { font-family: Arial; background: #1e1e2f; color: white; padding: 20px; text-align: center; }
-  .box { background: #2e2e4e; padding: 30px; border-radius: 15px; max-width: 600px; margin: auto; box-shadow: 0 0 20px rgba(0,191,255,0.2); }
-    input, textarea, button { padding: 12px; margin: 10px; width: 80%; border-radius: 8px; border: none; font-size: 15px; }
+  .box { background: #2e2e4e; padding: 30px; border-radius: 15px; max-width: 600px; margin: auto; }
+    input, textarea, button { padding: 10px; margin: 10px; width: 80%; border-radius: 8px; border: none; font-size: 16px; }
     button { background: #00bfff; color: black; font-weight: bold; cursor: pointer; width: 38%; }
-    button:hover { background: #00a0dd; transform: scale(1.02); }
-    #result { background: #111; padding: 15px; border-radius: 8px; word-wrap: break-word; min-height: 50px; text-align: left; }
-    a { color: #00bfff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-  .footer { font-size: 12px; color: #aaa; margin-top: 20px; }
-   .error { color: #ff4d4d; font-size: 13px; }
+    button:hover { background: #00a0dd; }
+    #result { background: #111; padding: 15px; border-radius: 8px; word-wrap: break-word; min-height: 40px; text-align: left; }
+    a { color: #00bfff; }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>Implement Caesar Cipher</h1>
-    <p style="color:#00bfff;">Project for Inten Alpha</p>
     <p>Encrypt and Decrypt Text using Caesar Cipher Algorithm</p>
 
     <textarea id="message" rows="3" placeholder="Enter Message"></textarea><br>
-    <input id="shift" type="number" placeholder="Enter Shift Value 1-25" min="1" max="25" value="3"><br>
-    <p id="error" class="error"></p>
+    <input id="shift" type="number" placeholder="Enter Shift Value 1-25" value="3" min="1" max="25"><br>
 
     <button onclick="encrypt()">Encrypt</button>
     <button onclick="decrypt()">Decrypt</button>
@@ -34,57 +29,47 @@
     <br>
     <h3>Download Python Code:</h3>
     <a href="caesar_cipher.py" download>caesar_cipher.py</a>
-
-    <div class="footer">
-      <p>Developed by: Binay</p>
-    </div>
   </div>
 
 <script>
 function caesar(text, shift) {
   let result = "";
+  // shift ko 0-25 ke beech me laana zaroori hai
+  shift = ((shift % 26) + 26) % 26;
+
   for(let i=0; i<text.length; i++) {
     let char = text[i];
-    if(char.match(/[a-z]/i)) {
-      let code = text.charCodeAt(i);
-      if(code >= 65 && code <= 90)
-        char = String.fromCharCode(((code - 65 + shift + 26) % 26) + 65);
-      else if(code >= 97 && code <= 122)
-        char = String.fromCharCode(((code - 97 + shift + 26) % 26) + 97);
+    let code = text.charCodeAt(i);
+
+    if(code >= 65 && code <= 90) { // A-Z
+      char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+    }
+    else if(code >= 97 && code <= 122) { // a-z
+      char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
     }
     result += char;
   }
   return result;
 }
 
-function validate() {
-  let shift = parseInt(document.getElementById("shift").value);
-  let msg = document.getElementById("message").value;
-  document.getElementById("error").innerText = "";
-
-  if(msg.trim() === "") {
-    document.getElementById("error").innerText = "Please enter a message";
-    return false;
-  }
-  if(isNaN(shift) || shift < 1 || shift > 25) {
-    document.getElementById("error").innerText = "Shift must be between 1-25";
-    return false;
-  }
-  return true;
-}
-
 function encrypt() {
-  if(!validate()) return;
   let msg = document.getElementById("message").value;
   let shift = parseInt(document.getElementById("shift").value);
+  if(msg === "" || isNaN(shift)) {
+    document.getElementById("result").innerText = "Please enter message and shift value";
+    return;
+  }
   document.getElementById("result").innerText = caesar(msg, shift);
 }
 
 function decrypt() {
-  if(!validate()) return;
   let msg = document.getElementById("message").value;
-  let shift = parseInt(document.getElementById="shift").value;
-  document.getElementById("result").innerText = caesar(msg, -shift);
+  let shift = parseInt(document.getElementById("shift").value);
+  if(msg === "" || isNaN(shift)) {
+    document.getElementById("result").innerText = "Please enter message and shift value";
+    return;
+  }
+  document.getElementById("result").innerText = caesar(msg, -shift); // yaha -shift se auto decrypt ho jayega
 }
 </script>
 </body>
